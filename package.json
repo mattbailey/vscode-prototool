@@ -1,0 +1,80 @@
+{
+  "name": "vscode-prototool",
+  "displayName": "vscode-prototool",
+  "description": "Wrapper for prototool https://github.com/uber/prototool",
+  "repository": {
+    "url": "https://github.com/mattbailey/vscode-prototool"
+  },
+  "version": "0.1.0",
+  "publisher": "mattbailey",
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "categories": [
+    "Linters",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.prototool",
+        "title": "Prototool"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "prototool configuration",
+      "properties": {
+        "prototool.path": {
+          "type": "string",
+          "default": "prototool",
+          "scope": "resource",
+          "description": "Path to prototool"
+        },
+        "prototool.docker.use": {
+          "type": "boolean",
+          "default": false,
+          "scope": "resource",
+          "description": "use docker image to run prototool rather than local installation"
+        },
+        "prototool.docker.image": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "docker image name."
+        },
+        "prototool.docker.volume": {
+          "type": "string",
+          "default": "/src",
+          "scope": "resource",
+          "description": "docker volume target to mount the directory of the file"
+        },
+        "prototool.lint.flags": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "additional flags for prototool (--json always present)"
+        }
+      }
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.11.8",
+    "tslint": "^5.8.0",
+    "typescript": "^3.3.4000",
+    "vscode": "^1.1.6"
+  }
+}
