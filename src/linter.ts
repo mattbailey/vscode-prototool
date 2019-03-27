@@ -77,6 +77,7 @@ export default class Linter {
 
   public lint(
     document: vscode.TextDocument,
+    root: string | undefined,
     fileName: string,
     options: LinterOptions,
     handler: LinterHandler | null = null
@@ -100,10 +101,12 @@ export default class Linter {
       return;
     }
 
-    const dirname = path.dirname(fileName);
-    const filename = path.basename(fileName);
+    // Optimally, we want to be relative to the source root, and docker needs to use that root
+    //   as it's mount volume
+    const dirname = root ? root : path.dirname(fileName);
+    const filename = root ? path.relative(root, fileName) : path.basename(fileName);
     const cmd = this.config.docker.use
-      ? `docker run --rm -v ${dirname}:/${this.config.docker.volume} ${
+      ? `docker run --rm -v ${dirname}:${this.config.docker.volume} ${
           this.config.docker.image
         } lint --json ${this.config.lint.flags} ${filename}`
       : `${this.config.prototool.path} --json lint ${this.config.lint.flags} ${filename}`;
