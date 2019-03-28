@@ -27,11 +27,11 @@ export default class Linter {
   constructor(config: any) {
     this.config = config;
   }
-  private exec(command: string) {
+  private exec(command: string, cwd: string) {
     return new Promise(function(resolve, reject) {
       cp.exec(
         command,
-        {},
+        { cwd },
         (err: cp.ExecException | null, stdout: string | Buffer, stderr: string | Buffer) => {
           if (!err) {
             resolve(stdout);
@@ -77,7 +77,7 @@ export default class Linter {
 
   public lint(
     document: vscode.TextDocument,
-    root: string | undefined,
+    root: string,
     fileName: string,
     options: LinterOptions,
     handler: LinterHandler | null = null
@@ -103,17 +103,15 @@ export default class Linter {
 
     // Optimally, we want to be relative to the source root, and docker needs to use that root
     //   as it's mount volume
-    const dirname = root ? root : path.dirname(fileName);
-    const filename = root ? path.relative(root, fileName) : path.basename(fileName);
+    const filename = path.relative(root, fileName);
     const cmd = this.config.docker.use
-      ? `docker run --rm -v ${dirname}:${this.config.docker.volume} ${
-          this.config.docker.image
-        } lint --json ${this.config.lint.flags} ${filename}`
-      : `${this.config.prototool.path} --json lint ${this.config.lint.flags} ${filename}`;
+      ? `docker run --rm -v ${root}:${this.config.docker.volume} ${this.config.docker.image} ${
+          this.config.lint.flags
+        } ${filename}`
+      : `${this.config.prototool.path} ${this.config.lint.flags} ${filename}`;
 
     // TODO: detect when command does not exist
-    console.log(`[vscode-prototool] Lint Command: ${cmd}`);
-    const result = this.exec(cmd);
+    const result = this.exec(cmd, root);
 
     if (handler) {
       result

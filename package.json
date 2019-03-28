@@ -5,7 +5,7 @@
   "repository": {
     "url": "https://github.com/mattbailey/vscode-prototool"
   },
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "mattbailey",
   "engines": {
     "vscode": "^1.22.0"
@@ -39,7 +39,7 @@
           "type": "boolean",
           "default": false,
           "scope": "resource",
-          "description": "use docker image to run prototool rather than local installation"
+          "description": "use docker image to run prototool rather than local installation ENTRYPOINT should be prototool"
         },
         "prototool.docker.image": {
           "type": "string",
@@ -55,9 +55,9 @@
         },
         "prototool.lint.flags": {
           "type": "string",
-          "default": "",
+          "default": "lint --json",
           "scope": "resource",
-          "description": "additional flags for prototool (--json always present)"
+          "description": "command line arguments for linting with prototool"
         }
       }
     }
